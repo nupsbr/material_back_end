@@ -3,6 +3,7 @@ import datetime
 
 #   ALTERAR CAMINHO DO ACCESS ------------------------ DESENVOLVER CAMINHO AUTOMATICO---------------------
 connection_string = r"DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\higor\OneDrive\Área de Trabalho\Trabalho topicos integradores 2\DataBase_Cadastro.accdb;"
+# aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 
 def executar_consulta(nome_consulta):
