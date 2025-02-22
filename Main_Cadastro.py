@@ -2,8 +2,7 @@ import pyodbc
 import datetime
 
 #   ALTERAR CAMINHO DO ACCESS ------------------------ DESENVOLVER CAMINHO AUTOMATICO---------------------
-connection_string = r"DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\higor\OneDrive\Área de Trabalho\Trabalho topicos integradores 2\DataBase_Cadastro.accdb;"
-# aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+connection_string = r"DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\higor\OneDrive\Área de Trabalho\Projeto\material_back_end\DataBase_Cadastro.accdb;"
 
 
 def executar_consulta(nome_consulta):
@@ -32,28 +31,17 @@ def inserir_dados():
         sobrenome = input("Sobrenome: ")
         idade = input("Idade: ")
         cpf = input("CPF: ")
-
-        # 1 = cliente 2 = funcionario
-        categoria_input = input(
-            "Digite 1 para 'Cliente' ou 2 para 'Funcionario': ")
-        if categoria_input == "1":
-            categoria = "Cliente"
-        elif categoria_input == "2":
-            categoria = "Funcionario"
-        else:
-            print("Opção inválida. Categoria definida como 'Cliente' por padrão.")
-            categoria = "Cliente"
+        Email= input("Email: ")
 
         # data atual para coluna data
         data_cadastro = datetime.datetime.now().strftime("%Y-%m-%d")
 
         # add dados para Cadastro_temp
         sql = """
-        INSERT INTO Cadastro_temp (Nome, Sobrenome, idade, cpf, [data de cadastro], Categoria)
+        INSERT INTO [Cliente Cadastrados] ( CPF,Nome, Sobrenome, Idade, Email, [Data de Cadastro] )
         VALUES (?, ?, ?, ?, ?, ?)
         """
-        cursor.execute(sql, (nome, sobrenome, idade,
-                       cpf, data_cadastro, categoria))
+        cursor.execute(sql, (cpf,nome,sobrenome,idade,Email,data_cadastro ))
         conn.commit()
         print("\nDados inseridos com sucesso!")
     except Exception as e:
@@ -62,6 +50,30 @@ def inserir_dados():
         cursor.close()
         conn.close()
 
+def inserir_MaquinasCadastradas():
+    try:
+        conn = pyodbc.connect(connection_string)
+        cursor = conn.cursor()
+
+        # input pelo terminal
+        nomedamaquina = input("\nNome da maquina: ")
+        preço = input("preço: ")
+    
+        data_cadastro = datetime.datetime.now().strftime("%Y-%m-%d")
+
+        sql = """
+        INSERT INTO [Todas as Maquinas] ( [Nome da maquina], preço)
+        VALUES (?, ?)
+        """
+        cursor.execute(sql, (nomedamaquina,preço ))
+        conn.commit()
+        print("\nDados inseridos com sucesso!")
+    except Exception as e:
+        print("Erro ao inserir os dados:", e)
+    finally:
+        cursor.close()
+        conn.close()
+        
 
 # Menu principal-------------------------------------------------------------------------------------------------------
 while True:
@@ -69,20 +81,13 @@ while True:
     print("MENU PRINCIPAL".center(50))
     print("=" * 50)
     opcao = input(
-        "\n[I]nserir dados\n[C]onsultar registros\n[A]pagar Cadastro Temp e executar acréscimo\n[S]air\n\nEscolha uma opção: ").upper()
+        "\n[C]Cadrastrar Cliente\n[M]Cadastrar Maquina\n[S]air\n\nEscolha uma opção: ").upper()
 
-    if opcao == "I":
+    if opcao == "C":
         inserir_dados()
-    elif opcao == "C":
-        print("\nExecutando consultas do tipo acréscimo...")
-
-        for consulta in ("Filtra_Funcionario", "Filtra_Cliente"):
-            executar_consulta(consulta)
-    elif opcao == "A":  # tem q manter a ordem, 1° add cadastro hist 2° apagar cadastro!!!
-        print("\nExecutando consulta de acréscimo: ADD_Cadastro_HIST...")
-        executar_consulta("ADD_Cadastro_HIST")
-        print("\nExecutando consulta de exclusão: Apagar_Cadastro_Temp...")
-        executar_consulta("Apagar_Cadastro_Temp")
+    elif opcao == "M":
+        inserir_MaquinasCadastradas()
+  
     elif opcao == "S":
         print("\nSaindo do sistema...")
         break
